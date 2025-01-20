@@ -5,15 +5,16 @@
 #include <cmath>
 #include <queue>
 
-
-#define infinity 2147483647
-#define initWeight 1
-
 using namespace std;
 
 int g, h, match, mismatch;
 
-int* Alignment(DAG& dag, const string& sequence, int mode, const string& filename) {
+vector<Node*> Alignment(DAG& dag, const string& sequence, int mode, const string& filename) {
+    unordered_map<Node*, int> nodePosition;
+    for (int i = 0; i < dag.nodes.size(); i++) {
+        nodePosition[dag.nodes[i]] = i;
+    }
+
     int m = dag.nodes.size();
     int n = sequence.size();
 
@@ -33,13 +34,12 @@ int* Alignment(DAG& dag, const string& sequence, int mode, const string& filenam
     t = ::g;
 
     for (int i = 1; i < m; i++) {
-        Node cur = dag.nodes[i];
+        Node* curNode = dag.nodes[i];
 
         // 初始化C[i][0]和I[i][0]
         int min = infinity;
-        for (int k = 0; k < cur.pre.size(); k++) {
-            int p = dag.id_node[cur.pre[k]];
-            min = fmin(min, C[p][0]);
+        for (Node* preNode : curNode->pre) {
+            min = fmin(min, C[nodePosition[preNode]][0]);
         }
         min = min == 0 ? t : min;
         C[i][0] = min + ::h;
@@ -49,10 +49,11 @@ int* Alignment(DAG& dag, const string& sequence, int mode, const string& filenam
         for (int j = 1; j <= n; j++) {
 
             I[i][j] = fmin(I[i][j - 1], C[i][j - 1] + ::g) + ::h;
-            int w = cur.letter == sequence[j - 1] ? (::match) : (::mismatch);
+            int w = curNode->letter == sequence[j - 1] ? (::match) : (::mismatch);
 
-            for (int k = 0; k < cur.pre.size(); k++) {
-                int p = dag.id_node[cur.pre[k]];
+            int k = 0;
+            for (Node* preNode : curNode->pre) {
+                int p = nodePosition[preNode];
                 if (k == 0) {
                     D[i][j] = fmin(D[p][j], C[p][j] + ::g) + ::h;
                     C[i][j] = fmin(C[p][j - 1] + w, fmin(D[i][j], I[i][j]));
@@ -61,13 +62,12 @@ int* Alignment(DAG& dag, const string& sequence, int mode, const string& filenam
                     D[i][j] = fmin(D[i][j], fmin(D[p][j], C[p][j] + ::g) + ::h);
                     C[i][j] = fmin(C[i][j], fmin(C[p][j - 1] + w, fmin(D[i][j], I[i][j])));
                 }
+                k++;
             }
         }
     }
 
-    int* align = AllocateIntVec(n + 1);
-    memset(align, -1, (n + 1) * sizeof(int));
-    align[0] = 0;
+    vector<Node*> alignPair;
 
     int i = m - 1, j = n;
 
@@ -76,17 +76,18 @@ int* Alignment(DAG& dag, const string& sequence, int mode, const string& filenam
     // printMatrix(I,m,n+1);
 
     while (i > 0 && j > 0) {
-        Node cur = dag.nodes[i];
+        Node* curNode = dag.nodes[i];
 
         if (C[i][j] == I[i][j]) { // Seq[j]对应空位
+            alignPair.insert(alignPair.begin(), nullptr);
             j--;
         }
         else {
-            int w = cur.letter == sequence[j - 1] ? (::match) : (::mismatch);
-            for (int k = 0; k < cur.pre.size(); k++) {
-                int p = dag.id_node[cur.pre[k]];
+            int w = curNode->letter == sequence[j - 1] ? (::match) : (::mismatch);
+            for (Node* preNode : curNode->pre) {
+                int p = nodePosition[preNode];
                 if (C[i][j] == C[p][j - 1] + w) {
-                    align[j] = dag.nodes[i].id;
+                    alignPair.insert(alignPair.begin(), dag.nodes[i]);
                     i = p;
                     j--;
                     break;
@@ -99,12 +100,12 @@ int* Alignment(DAG& dag, const string& sequence, int mode, const string& filenam
 
         }
     }
-
+    alignPair.insert(alignPair.begin(), dag.nodes[0]);
     FreeIntMtx(C);
     FreeIntMtx(D);
     FreeIntMtx(I);
 
-    return align;
+    return alignPair;
 }
 
 string HeaviestBundlingCons(DAG& dag) {
@@ -116,51 +117,56 @@ string HeaviestBundlingCons(DAG& dag) {
 
     int* D = AllocateIntVec(n);                 // 创建存储节点出度的数组
     for (int i = 0; i < n; i++) {                  // 记录每个节点的出度            
-        Node cur = dag.nodes[i];
-        D[cur.id] = cur.edges.size();
+        Node* curNode = dag.nodes[i];
+        D[curNode->id] = curNode->edges.size();
     }
 
-    int* out = AllocateIntVec(n);               // 每个节点的最大权重后继节点
-    memset(out, -1, n * sizeof(int));
+    vector<Node*> out;                           // 每个节点的最大权重后继节点           
+    for (int i = 0; i < n; i++) {
+        out.push_back(nullptr);
+    }
 
-    queue<int> Q;                               // 用于节点遍历的队列
-    Q.push(1);                                  // 将节点E放入队列，节点E的id为1            
+    queue<Node*> Q;                               // 用于节点遍历的队列
+    Node* E = dag.nodes[dag.nodes.size() - 1];
+    Q.push(E);                                  // 将节点E放入队列，节点E的id为1            
 
 
     while (!Q.empty()) {
-        int cur = Q.front();
+        Node* curNode = Q.front();
         Q.pop();
-        Node curNode = dag.nodes[dag.id_node[cur]];
-
+        int cur = curNode->id;
+       
         int wmax = -1;
 
-        for (int i = 0; i < curNode.edges.size(); i++) {
-            int suc = curNode.edges[i].to;
-            int w = curNode.edges[i].weight;
-            if (w > wmax || (w == wmax && score[suc] > score[out[cur]])) {
+        for (int i = 0; i < curNode->edges.size(); i++) {
+            Node* sucNode = curNode->edges[i]->to;
+            int suc = sucNode->id;
+            int w = curNode->edges[i]->weight;
+            if (w > wmax || (w == wmax && score[suc] > score[out[cur]->id])) {
                 wmax = w;
-                out[cur] = suc;                  // 设置最大权重的后继节点
+                out[cur] = sucNode;                  // 设置最大权重的后继节点
             }
         }
-        score[cur] += wmax + score[out[cur]];
+        if(cur != 1) score[cur] += wmax + score[out[cur]->id];
 
 
-        for (int i = 0; i < curNode.pre.size(); i++) {
-            int p = curNode.pre[i];
+        for (int i = 0; i < curNode->pre.size(); i++) {
+            Node* preNode = curNode->pre[i];
+            int p = preNode->id;
             D[p] = D[p] - 1;
             if (D[p] == 0) {                     // p节点的后继节点已被遍历过
-                Q.push(p);                       // p节点进入队列
+                Q.push(preNode);                       // p节点进入队列
             }
         }
 
     }
 
 
-    int node = out[0];
+    Node* node = out[0];
 
-    while (node != 1) {
-        Cons += dag.nodes[dag.id_node[node]].letter;  // 根据最大权重后继系节点生成共有序列
-        node = out[node];
+    while (node != E) {
+        Cons += node->letter;  // 根据最大权重后继系节点生成共有序列
+        node = out[node->id];
     }
 
     // FreeIntVec(score);
@@ -198,18 +204,16 @@ int main(int argc, char* argv[]) {
 
     if (mode == 0) {
         for (int i = 1; i < sequences.size(); i++) {
-            int* align = Alignment(dag, sequences[i] + 'E', mode, output_foldername + "/" + to_string(i) + ".txt");
-            dag.construction(align, sequences[i].size() + 2, sequences[i]);
-            FreeIntVec(align);
+            vector<Node*> alignPair = Alignment(dag, sequences[i] + 'E', mode, output_foldername + "/" + to_string(i) + ".txt");
+            dag.construction(alignPair, sequences[i]);
         }
         dag.writeDotFile(output_foldername + "/result.dot");
         writeCons(HeaviestBundlingCons(dag), output_foldername + "/consensus.txt");
     }
     else if (mode == 1) {
         for (int i = 1; i < sequences.size(); i++) {
-            int* align = Alignment(dag, sequences[i] + 'E', mode, output_foldername + "/" + to_string(i) + ".txt");
-            dag.construction(align, sequences[i].size() + 2, sequences[i]);
-            FreeIntVec(align);
+            vector<Node*> alignPair = Alignment(dag, sequences[i] + 'E', mode, output_foldername + "/" + to_string(i) + ".txt");
+            dag.construction(alignPair, sequences[i]);
             dag.writeDotFile(output_foldername + "/" + to_string(i) + ".dot");
         }
     }
