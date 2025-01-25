@@ -37,6 +37,19 @@ vector<string> readFasta(const string& filename) {
     return sequences;
 }
 
+void sortFastaByLength(vector<string>& sequences, bool descending) {
+    if (descending) { // 从长到短排序
+        stable_sort(sequences.begin(), sequences.end(), [](const string& a, const string& b) {
+            return a.size() > b.size();
+            });
+    }
+    else { // 从短到长排序
+        stable_sort(sequences.begin(), sequences.end(), [](const string& a, const string& b) {
+            return a.size() < b.size();
+            });
+    }
+}
+
 void writeMatrix(int** X, int row, int col, const string& filename) {
     ofstream outFile(filename);
     // 检查文件是否成功打开

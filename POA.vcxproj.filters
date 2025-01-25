@@ -27,6 +27,9 @@
     <ClCompile Include="io.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="upgma.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mtxutl.hpp">
@@ -36,6 +39,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="io.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="upgma.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
