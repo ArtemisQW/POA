@@ -1,6 +1,5 @@
 #include"upgma.hpp"
 
-
 double calculateDistance(const string& seq1, const string& seq2) {
 	
 }
@@ -10,6 +9,7 @@ int calculatePos(int i, int j, int n) {
 	return ((2 * n - i - 1) * i) / 2 + j - i - 1;
 }
 
+// 计算初始距离矩阵，初始化聚类到各个序列之间的距离，初始化unselected
 pair<int, int> initDistance(vector<string>& sequences) {
 	int n = sequences.size();
 	for (int i = 0; i < n; i++) unselected.insert(i);
