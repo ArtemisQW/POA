@@ -131,11 +131,13 @@
     <ClCompile Include="io.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mtxutl.cpp" />
+    <ClCompile Include="upgma.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph.hpp" />
     <ClInclude Include="io.hpp" />
     <ClInclude Include="mtxutl.hpp" />
+    <ClInclude Include="upgma.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

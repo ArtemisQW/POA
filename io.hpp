@@ -7,12 +7,15 @@
 #include <string>
 #include <iomanip>
 #include <filesystem> 
+#include <algorithm>
 
 
 using namespace std;
 
 
 vector<string> readFasta(const string& filename);
+
+void sortFastaByLength(vector<string>& vector<string>& vec, bool descending);
 
 void writeMatrix(int** X, int row, int col, const string& filename);
 
