@@ -15,7 +15,7 @@ using namespace std;
 
 vector<string> readFasta(const string& filename);
 
-void sortFastaByLength(vector<string>& vector<string>& vec, bool descending);
+void sortFastaByLength(vector<string>& sequences, bool descending);
 
 void writeMatrix(int** X, int row, int col, const string& filename);
 

@@ -35,6 +35,7 @@ public:
 
     void init(const string& sequence);      // 输入一个序列进行图的初始化
 
+    // bool contain(Node* a, Node* b);
     void construction(vector<Node*> alignPair, const string& sequence);     // 根据回溯结果，将新序列加入图中
 
     void printDag();

@@ -77,7 +77,7 @@ void writeCons(const string& cons, const string& filename) {
         cerr << "Error opening file: " << filename << endl;
         return;
     }
-
+    outfile << ">consensus" << endl;
     outfile << cons;
     outfile.close();
 }
