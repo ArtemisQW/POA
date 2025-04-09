@@ -538,6 +538,9 @@ int main(int argc, char* argv[]) {
             break;
         }
     }
+    else {
+        cout << "Sequences unsorted" << endl;
+    }
     
     // ³õÊ¼»¯
     if (sequences.size() > 0) dag.init(sequences[0]);
