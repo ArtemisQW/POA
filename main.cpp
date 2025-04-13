@@ -21,7 +21,7 @@ bool isGap(Node* curnode, Node* prenode) {
 
 //int calculateScore(const vector<Node*>& alignPair, const string& sequence) {
 //    int score = 0;
-//    bool in_gap = false; // ±ê¼ÇÊÇ·ñÔÚ gap Çø¼ä
+//    bool in_gap = false; // æ ‡è®°æ˜¯å¦åœ¨ gap åŒºé—´
 //
 //    for (int i = 0; i < alignPair.size(); i++) {
 //        if (alignPair[i+1] == nullptr || (alignPair[i] != nullptr && isGap(alignPair[i+1],alignPair[i]))) {  // gap
@@ -34,7 +34,7 @@ bool isGap(Node* curnode, Node* prenode) {
 //            }
 //        }
 //        else {
-//            in_gap = false; // ÍË³ö gap
+//            in_gap = false; // é€€å‡º gap
 //            if (alignPair[i+1]->letter == sequence[i]) {
 //                score += ::match;  
 //            }
@@ -46,10 +46,10 @@ bool isGap(Node* curnode, Node* prenode) {
 //    return score;
 //}
 
-// calculateScore ±ØĞë·ÅÔÚ construction Ö®Ç°
+// calculateScore å¿…é¡»æ”¾åœ¨ construction ä¹‹å‰
 int calculateScore(const vector<Node*>& alignPair, const string& sequence) {
     int score = 0;
-    bool in_gap = false; // ±ê¼ÇÊÇ·ñÔÚ gap Çø¼ä
+    bool in_gap = false; // æ ‡è®°æ˜¯å¦åœ¨ gap åŒºé—´
     int pos = sequence.length();
     for (int i = 0; i < sequence.length() - 1; i++) {
         if (alignPair[i] == nullptr) {  // gap
@@ -62,7 +62,7 @@ int calculateScore(const vector<Node*>& alignPair, const string& sequence) {
             }
         }
         else {
-            in_gap = false; // ÍË³ö gap
+            in_gap = false; // é€€å‡º gap
             if (alignPair[i]->letter == sequence[i]) {
                 score += ::match;
             }
@@ -111,7 +111,7 @@ vector<Node*> Alignment(DAG& dag, const string& sequence, bool score_output, con
 
     for (int i = 1; i < m; i++) {
         Node* curNode = dag.nodes[i];
-        // ³õÊ¼»¯C[i][0]ºÍI[i][0]
+        // åˆå§‹åŒ–C[i][0]å’ŒI[i][0]
         int min = infinity;
         for (Node* preNode : curNode->pre) {
             // cout << nodePosition[preNode] << endl;
@@ -121,7 +121,7 @@ vector<Node*> Alignment(DAG& dag, const string& sequence, bool score_output, con
         C[i][0] = min + ::h;
         I[i][0] = C[i][0] + ::g;
 
-        // µİÍÆ
+        // é€’æ¨
         for (int j = 1; j <= n; j++) {
 
             I[i][j] = fmin(I[i][j - 1], C[i][j - 1] + ::g) + ::h;
@@ -146,7 +146,7 @@ vector<Node*> Alignment(DAG& dag, const string& sequence, bool score_output, con
     vector<Node*> alignPair;
     int i = m - 1, j = n;
     if (score_output) cout << C[i][j] << endl;
-    // writeMatrix(C, m, n + 1, filename);  // Êä³öC¾ØÕó
+    // writeMatrix(C, m, n + 1, filename);  // è¾“å‡ºCçŸ©é˜µ
     // printMatrix(D,m,n+1);
     // printMatrix(I,m,n+1);
 
@@ -210,7 +210,7 @@ vector<Node*> Alignment(DAG& dag, const string& sequence, bool score_output, con
     //while (i > 0 && j > 0) {
     //    Node* curNode = dag.nodes[i];
 
-    //    if (C[i][j] == I[i][j]) { // Seq[j]¶ÔÓ¦¿ÕÎ»
+    //    if (C[i][j] == I[i][j]) { // Seq[j]å¯¹åº”ç©ºä½
     //        alignPair.insert(alignPair.begin(), nullptr);
     //        j--;
     //    }
@@ -255,26 +255,26 @@ vector<Node*> Alignment(DAG& dag, const string& sequence, bool score_output, con
 }
 
 string HeaviestBundlingCons(DAG& dag) {
-    int n = dag.nodes.size();   // Í¼GÖĞµÄ½ÚµãÊıÁ¿
-    string Cons = "";           // ´æ´¢Éú³ÉµÄ¹²Ê¶ĞòÁĞ
+    int n = dag.nodes.size();   // å›¾Gä¸­çš„èŠ‚ç‚¹æ•°é‡
+    string Cons = "";           // å­˜å‚¨ç”Ÿæˆçš„å…±è¯†åºåˆ—
 
-    int* score = AllocateIntVec(n);             // ´´½¨´æ´¢½ÚµãµÃ·ÖµÄÊı×é
-    memset(score, 0, n * sizeof(int));          // ³õÊ¼»¯½ÚµãµÃ·ÖÎª0
+    int* score = AllocateIntVec(n);             // åˆ›å»ºå­˜å‚¨èŠ‚ç‚¹å¾—åˆ†çš„æ•°ç»„
+    memset(score, 0, n * sizeof(int));          // åˆå§‹åŒ–èŠ‚ç‚¹å¾—åˆ†ä¸º0
 
-    int* D = AllocateIntVec(n);                 // ´´½¨´æ´¢½Úµã³ö¶ÈµÄÊı×é
-    for (int i = 0; i < n; i++) {                  // ¼ÇÂ¼Ã¿¸ö½ÚµãµÄ³ö¶È            
+    int* D = AllocateIntVec(n);                 // åˆ›å»ºå­˜å‚¨èŠ‚ç‚¹å‡ºåº¦çš„æ•°ç»„
+    for (int i = 0; i < n; i++) {                  // è®°å½•æ¯ä¸ªèŠ‚ç‚¹çš„å‡ºåº¦            
         Node* curNode = dag.nodes[i];
         D[curNode->id] = curNode->edges.size();
     }
 
-    vector<Node*> out;                           // Ã¿¸ö½ÚµãµÄ×î´óÈ¨ÖØºó¼Ì½Úµã           
+    vector<Node*> out;                           // æ¯ä¸ªèŠ‚ç‚¹çš„æœ€å¤§æƒé‡åç»§èŠ‚ç‚¹           
     for (int i = 0; i < n; i++) {
         out.push_back(nullptr);
     }
 
-    queue<Node*> Q;                               // ÓÃÓÚ½Úµã±éÀúµÄ¶ÓÁĞ
+    queue<Node*> Q;                               // ç”¨äºèŠ‚ç‚¹éå†çš„é˜Ÿåˆ—
     Node* E = dag.nodes[dag.nodes.size() - 1];
-    Q.push(E);                                  // ½«½ÚµãE·ÅÈë¶ÓÁĞ£¬½ÚµãEµÄidÎª1            
+    Q.push(E);                                  // å°†èŠ‚ç‚¹Eæ”¾å…¥é˜Ÿåˆ—ï¼ŒèŠ‚ç‚¹Eçš„idä¸º1            
 
 
     while (!Q.empty()) {
@@ -290,7 +290,7 @@ string HeaviestBundlingCons(DAG& dag) {
             int w = curNode->edges[i]->weight;
             if (w > wmax || (w == wmax && score[suc] > score[out[cur]->id])) {
                 wmax = w;
-                out[cur] = sucNode;                  // ÉèÖÃ×î´óÈ¨ÖØµÄºó¼Ì½Úµã
+                out[cur] = sucNode;                  // è®¾ç½®æœ€å¤§æƒé‡çš„åç»§èŠ‚ç‚¹
             }
         }
         if(cur != 1) score[cur] += wmax + score[out[cur]->id];
@@ -300,8 +300,8 @@ string HeaviestBundlingCons(DAG& dag) {
             Node* preNode = curNode->pre[i];
             int p = preNode->id;
             D[p] = D[p] - 1;
-            if (D[p] == 0) {                     // p½ÚµãµÄºó¼Ì½ÚµãÒÑ±»±éÀú¹ı
-                Q.push(preNode);                       // p½Úµã½øÈë¶ÓÁĞ
+            if (D[p] == 0) {                     // pèŠ‚ç‚¹çš„åç»§èŠ‚ç‚¹å·²è¢«éå†è¿‡
+                Q.push(preNode);                       // pèŠ‚ç‚¹è¿›å…¥é˜Ÿåˆ—
             }
         }
 
@@ -311,7 +311,7 @@ string HeaviestBundlingCons(DAG& dag) {
     Node* node = out[0];
 
     while (node != E) {
-        Cons += node->letter;  // ¸ù¾İ×î´óÈ¨ÖØºó¼ÌÏµ½ÚµãÉú³É¹²ÓĞĞòÁĞ
+        Cons += node->letter;  // æ ¹æ®æœ€å¤§æƒé‡åç»§ç³»èŠ‚ç‚¹ç”Ÿæˆå…±æœ‰åºåˆ—
         node = out[node->id];
     }
 
@@ -326,24 +326,24 @@ string HeaviestBundlingCons(DAG& dag) {
 
 //int main(int argc, char* argv[]) {
 //
-//    // ¼ì²é²ÎÊı¸öÊıÊÇ·ñÕıÈ·
+//    // æ£€æŸ¥å‚æ•°ä¸ªæ•°æ˜¯å¦æ­£ç¡®
 //    if (argc != 8) {
 //        cerr << "Usage: " << argv[0]
 //            << " <int g> <int h> <int match> <int mismatch> <int mode> <input_filename> <output_foldername>" << endl;
 //        return 1;
 //    }
 //
-//    // ½âÎö²ÎÊı
-//    ::g = stoi(argv[1]);                    // µÚÒ»¸ö²ÎÊı¡ª¡ª¼äÏ¶¿ªÆô´ú¼Û
-//    ::h = stoi(argv[2]);                    // µÚ¶ş¸ö²ÎÊı¡ª¡ª¼äÏ¶ÑÓÉì´ú¼Û
-//    ::match = stoi(argv[3]);                // µÚÈı¸ö²ÎÊı¡ª¡ªÆ¥ÅäµÃ·Ö
-//    ::mismatch = stoi(argv[4]);             // µÚËÄ¸ö²ÎÊı¡ª¡ª²»Æ¥ÅäµÃ·Ö
+//    // è§£æå‚æ•°
+//    ::g = stoi(argv[1]);                    // ç¬¬ä¸€ä¸ªå‚æ•°â€”â€”é—´éš™å¼€å¯ä»£ä»·
+//    ::h = stoi(argv[2]);                    // ç¬¬äºŒä¸ªå‚æ•°â€”â€”é—´éš™å»¶ä¼¸ä»£ä»·
+//    ::match = stoi(argv[3]);                // ç¬¬ä¸‰ä¸ªå‚æ•°â€”â€”åŒ¹é…å¾—åˆ†
+//    ::mismatch = stoi(argv[4]);             // ç¬¬å››ä¸ªå‚æ•°â€”â€”ä¸åŒ¹é…å¾—åˆ†
 //
-//    int mode = stoi(argv[5]);               // Êä³öÄ£Ê½²ÎÊı
-//    string input_filename = argv[6];        // ÊäÈëÎÄ¼şÃû
-//    string output_foldername = argv[7];     // Êä³öÎÄ¼ş¼ĞÃû
+//    int mode = stoi(argv[5]);               // è¾“å‡ºæ¨¡å¼å‚æ•°
+//    string input_filename = argv[6];        // è¾“å…¥æ–‡ä»¶å
+//    string output_foldername = argv[7];     // è¾“å‡ºæ–‡ä»¶å¤¹å
 //
-//    // ³õÊ¼»¯ DAG
+//    // åˆå§‹åŒ– DAG
 //    DAG dag;
 //    vector<string> sequences = readFasta(input_filename);
 //    sequences = sortFastaByClustering(sequences, 6, 0,0);
@@ -353,7 +353,7 @@ string HeaviestBundlingCons(DAG& dag) {
 //    if (mode == 0) {
 //        for (int i = 1; i < sequences.size(); i++) {
 //            vector<Node*> alignPair = Alignment(dag, sequences[i] + 'E', mode, output_foldername + "/" + to_string(i) + ".txt");
-//            cout << "score£º" << calculateScore(alignPair, 'S' + sequences[i] + 'E') << endl;
+//            cout << "scoreï¼š" << calculateScore(alignPair, 'S' + sequences[i] + 'E') << endl;
 //            dag.construction(alignPair, sequences[i]);
 //        }
 //        dag.writeDotFile(output_foldername + "/result.dot");
@@ -362,7 +362,7 @@ string HeaviestBundlingCons(DAG& dag) {
 //    else if (mode == 1) {
 //        for (int i = 1; i < sequences.size(); i++) {
 //            vector<Node*> alignPair = Alignment(dag, sequences[i] + 'E', mode, output_foldername + "/" + to_string(i) + ".txt");
-//            cout << "score£º" << calculateScore(alignPair, 'S' + sequences[i] + 'E') << endl; 
+//            cout << "scoreï¼š" << calculateScore(alignPair, 'S' + sequences[i] + 'E') << endl; 
 //            dag.construction(alignPair, sequences[i]);
 //            dag.writeDotFile(output_foldername + "/" + to_string(i) + ".dot");
 //        }
@@ -374,40 +374,40 @@ void Help() {
         "usage: POA <input.fasta> <output.fasta> [options ...]\n"
         "\n"
         "  <input.fasta>\n"
-        "      ÊäÈëÎÄ¼ş£¬FASTA ¸ñÊ½µÄĞòÁĞÎÄ¼ş£¬±ØĞë×÷ÎªµÚÒ»¸ö²ÎÊı\n"
+        "      è¾“å…¥æ–‡ä»¶ï¼ŒFASTA æ ¼å¼çš„åºåˆ—æ–‡ä»¶ï¼Œå¿…é¡»ä½œä¸ºç¬¬ä¸€ä¸ªå‚æ•°\n"
         "  <output.fasta>\n"
-        "      Êä³ö¹²Ê¶ĞòÁĞµÄFASTAÎÄ¼ş£¨´øÎÄ¼şÃû£©£¬±ØĞë×÷ÎªµÚ¶ş¸ö²ÎÊı\n"
+        "      è¾“å‡ºå…±è¯†åºåˆ—çš„FASTAæ–‡ä»¶ï¼ˆå¸¦æ–‡ä»¶åï¼‰ï¼Œå¿…é¡»ä½œä¸ºç¬¬äºŒä¸ªå‚æ•°\n"
         "\n"
         "  options:\n"
         "    -g <int>\n"
         "      default: 6\n"
-        "      ¼äÏ¶¿ªÆô´ú¼Û£¨±ØĞëÎª·Ç¸ºÕûÊı£©\n"
+        "      é—´éš™å¼€å¯ä»£ä»·ï¼ˆå¿…é¡»ä¸ºéè´Ÿæ•´æ•°ï¼‰\n"
         "    -h <int>\n"
         "      default: 2\n"
-        "      ¼äÏ¶ÑÓÉì´ú¼Û£¨±ØĞëÎª·Ç¸ºÕûÊı£©\n"
+        "      é—´éš™å»¶ä¼¸ä»£ä»·ï¼ˆå¿…é¡»ä¸ºéè´Ÿæ•´æ•°ï¼‰\n"
         "    -m <int>\n"
         "      default: 0\n"
-        "      Æ¥Åä·ÖÊı£¨±ØĞëÎª·Ç¸ºÕûÊı£©\n"
+        "      åŒ¹é…åˆ†æ•°ï¼ˆå¿…é¡»ä¸ºéè´Ÿæ•´æ•°ï¼‰\n"
         "    -mis <int>\n"
         "      default: 4\n"
-        "      ´íÅä·ÖÊı£¨±ØĞëÎª·Ç¸ºÕûÊı£©\n"
+        "      é”™é…åˆ†æ•°ï¼ˆå¿…é¡»ä¸ºéè´Ÿæ•´æ•°ï¼‰\n"
         "    -dot <path>\n"
-        "      Êä³öDOT¸ñÊ½Í¼ÎÄ¼şµÄÂ·¾¶£¨ÎÄ¼ş¼Ğ±ØĞë´æÔÚ£©\n"
+        "      è¾“å‡ºDOTæ ¼å¼å›¾æ–‡ä»¶çš„è·¯å¾„ï¼ˆæ–‡ä»¶å¤¹å¿…é¡»å­˜åœ¨ï¼‰\n"
         "    -score\n"
-        "      Êä³ö±È¶Ô¹ı³ÌµÄ×îÖÕµÃ·Ö£¨²»ĞèÒª¶îÍâ²ÎÊı£©\n"
+        "      è¾“å‡ºæ¯”å¯¹è¿‡ç¨‹çš„æœ€ç»ˆå¾—åˆ†ï¼ˆä¸éœ€è¦é¢å¤–å‚æ•°ï¼‰\n"
         "    -s <int> [<int>]\n"
-        "      ÊäÈëĞòÁĞÅÅĞò·½Ê½£¨¿ÉÑ¡Ò»¸ö»òÁ½¸ö²ÎÊı£©£º\n"
-        "        1 - °´ĞòÁĞ³¤¶ÈÉıĞòÅÅÁĞ\n"
-        "        2 - °´ĞòÁĞ³¤¶È½µĞòÅÅÁĞ\n"
-        "        3 - Ê¹ÓÃk-mer¼ÆËã¾àÀë£¬UPGMA¾ÛÀà\n"
-        "        4 - Ê¹ÓÃLLCS¼ÆËã¾àÀë£¬UPGMA¾ÛÀà\n"
-        "        5 - Ê¹ÓÃk-mer¼ÆËã¾àÀë£¬single linkage¾ÛÀà\n"
-        "        6 - Ê¹ÓÃLLCS¼ÆËã¾àÀë£¬single linkage¾ÛÀà\n"
-        "      ÈôÅÅĞò·½·¨Îª3¡¢5£¬¿ÉÑ¡µÚ2¸ö²ÎÊıÓÃÓÚÖ¸¶¨k-merµÄkÖµ\n"
+        "      è¾“å…¥åºåˆ—æ’åºæ–¹å¼ï¼ˆå¯é€‰ä¸€ä¸ªæˆ–ä¸¤ä¸ªå‚æ•°ï¼‰ï¼š\n"
+        "        1 - æŒ‰åºåˆ—é•¿åº¦å‡åºæ’åˆ—\n"
+        "        2 - æŒ‰åºåˆ—é•¿åº¦é™åºæ’åˆ—\n"
+        "        3 - ä½¿ç”¨k-merè®¡ç®—è·ç¦»ï¼ŒUPGMAèšç±»\n"
+        "        4 - ä½¿ç”¨LLCSè®¡ç®—è·ç¦»ï¼ŒUPGMAèšç±»\n"
+        "        5 - ä½¿ç”¨k-merè®¡ç®—è·ç¦»ï¼Œsingle linkageèšç±»\n"
+        "        6 - ä½¿ç”¨LLCSè®¡ç®—è·ç¦»ï¼Œsingle linkageèšç±»\n"
+        "      è‹¥æ’åºæ–¹æ³•ä¸º3ã€5ï¼Œå¯é€‰ç¬¬2ä¸ªå‚æ•°ç”¨äºæŒ‡å®šk-merçš„kå€¼\n"
         "    -help\n"
-        "      ´òÓ¡°ïÖúĞÅÏ¢\n"
+        "      æ‰“å°å¸®åŠ©ä¿¡æ¯\n"
         "\n"
-        "  Ê¾Àı:\n"
+        "  ç¤ºä¾‹:\n"
         "    POA input.fasta output.fasta -g 5 -h 2 -s 3 6 -dot result.dot -score\n"
         "\n";
 
@@ -424,16 +424,16 @@ int main(int argc, char* argv[]) {
         else cerr << "The number of parameters is incorrect" << endl;
     }
     
-    // Ä¬ÈÏ²ÎÊı
-    string input_filename = argv[1];        // ÊäÈëÎÄ¼şÃû
-    string consensus_output = argv[2];      // Êä³ö¹²Ê¶ĞòÁĞÎÄ¼şÃû
+    // é»˜è®¤å‚æ•°
+    string input_filename = argv[1];        // è¾“å…¥æ–‡ä»¶å
+    string consensus_output = argv[2];      // è¾“å‡ºå…±è¯†åºåˆ—æ–‡ä»¶å
     string dot_output = "";
-    int sort_method = 0;                   // ²»ÅÅĞòÄ¬ÈÏÖµ
-    int k = 6;                             // k-merµÄk
+    int sort_method = 0;                   // ä¸æ’åºé»˜è®¤å€¼
+    int k = 6;                             // k-merçš„k
     bool score_output = false;
     bool isdot_output = false;
     bool issort = false;
-    // ²ÎÊı½âÎö
+    // å‚æ•°è§£æ
     for (int i = 3; i < argc; i++) {
         string arg = argv[i];
        
@@ -501,11 +501,11 @@ int main(int argc, char* argv[]) {
 
 
   
-    // ĞòÁĞ¶ÁÈë
+    // åºåˆ—è¯»å…¥
     DAG dag;
     vector<string> sequences = readFasta(input_filename);
     
-    // ÅÅĞò
+    // æ’åº
     if (issort) {
         switch (sort_method) {
         case 1:
@@ -542,7 +542,7 @@ int main(int argc, char* argv[]) {
         cout << "Sequences unsorted" << endl;
     }
     
-    // ³õÊ¼»¯
+    // åˆå§‹åŒ–
     if (sequences.size() > 0) dag.init(sequences[0]);
 
 
