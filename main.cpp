@@ -529,7 +529,7 @@ int main(int argc, char* argv[]) {
             sequences = sortFastaByClustering(sequences, k, 1, 0);
             break;
         case 6:
-            cout << "Sort by LLCS+UPGMA" << endl;
+            cout << "Sort by LLCS+single_linkage" << endl;
             sequences = sortFastaByClustering(sequences, k, 1, 1);
             break;
         default:
