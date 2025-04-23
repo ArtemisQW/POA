@@ -64,8 +64,10 @@ int llcs(const string& seq1, const string& seq2, int mode) {
 
 	if (mode == 1) lcs(seq1, seq2, L);
 
+	int ans = L[m][n];
+	FreeIntMtx(L);
 
-	return L[m][n];
+	return ans;
 }
 
 void lcs(const string& seq1, const string& seq2, int** L) {
